@@ -14,9 +14,9 @@ services:
       - db-server
 
   db-server:
-    image: mcr.microsoft.com/mssql/server
-    environment:
-        SA_PASSWORD: "Andreani_2020"
-        ACCEPT_EULA: "Y"
+    image: sql
+    build:
+      context: .
+      dockerfile: geolocator/Persistence/Dockerfile
     ports:
       - "1433:1433"
