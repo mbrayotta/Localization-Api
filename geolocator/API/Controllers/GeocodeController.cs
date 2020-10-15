@@ -18,11 +18,11 @@ namespace API.Controllers
 
         // GET api/Geocode/5
         [HttpGet("{id}")]
-        public async Task<GeocodedAddress> Get(int id)
-        {
+        public async Task<IActionResult> Get(int id)
+        {         
             var response = await _repository.GetById(id);
             
-            return response;
+            return Ok(response);
         }
     }
 }
