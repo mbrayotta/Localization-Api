@@ -5,7 +5,7 @@ using System.Data.SqlClient;
 
 namespace Persistence
 {
-    public class GeocodedAddressRepository : IGeocodedAddress
+    public class GeocodedAddressRepository : IGeocodedAddressRepository
     {
         private readonly string _connectionString;
         public GeocodedAddressRepository(IConfiguration configuration){
@@ -18,7 +18,7 @@ namespace Persistence
                 using(SqlCommand cmd = new SqlCommand("GetAddressById", sqlConnec))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    cmd.Parameters.Add(new SqlParameter("@Id", id));
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
                     GeocodedAddress address = null;
                     await sqlConnec.OpenAsync();
 
@@ -47,8 +47,8 @@ namespace Persistence
             return new GeocodedAddress()
             {
                 Id = (int)reader["Id"],
-                Longitude = (decimal)reader["Longitude"],
-                Latitude = (decimal)reader["Latitude"],
+                Longitude = (string)reader["Longitude"],
+                Latitude = (string)reader["Latitude"],
                 State = "TERMINADO"
             };
         }

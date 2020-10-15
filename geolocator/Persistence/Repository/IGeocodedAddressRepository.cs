@@ -3,7 +3,7 @@ using Domain;
 
 namespace Persistence
 {
-    public interface IGeocodedAddress
+    public interface IGeocodedAddressRepository
     {
          Task<GeocodedAddress> GetById(int id);
     }

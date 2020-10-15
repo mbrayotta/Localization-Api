@@ -11,10 +11,10 @@ namespace API.Controllers
     [ApiController]
     public class GeolocateController : ControllerBase
     {
-        private readonly AddressRepository _repository;
-        private readonly SendAddress _sendAddress;
+        private readonly IAddressRepository _repository;
+        private readonly ISendAddress _sendAddress;
 
-        public GeolocateController(AddressRepository repository, SendAddress sendAddress)
+        public GeolocateController(IAddressRepository repository, ISendAddress sendAddress)
         {
             _repository = repository;
             _sendAddress = sendAddress;

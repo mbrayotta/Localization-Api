@@ -8,44 +8,42 @@ using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Services.RabbitMq.Options;
-using Services.OpenStreetMap;
 using System;
+using Persistence.Repository;
 
 namespace Services.RabbitMq.receive
 {
-    public class ReceiveAddress : BackgroundService
+    public class ReceiveGeocodedAddress : BackgroundService
     {
         private IModel _channel;
         private IConnection _connection;
-        private readonly IOpenStreetMapService _openStreetMapService;
         private readonly string _hostname;
         private readonly string _queueName;
         private readonly string _username;
         private readonly string _password;
         private readonly int _port;
+        private readonly IAddCoordinatesRepository _addCoordinatesRepository;
 
-        public ReceiveAddress(IOpenStreetMapService openStreetMapService, IOptions<RabbitMqConfiguration> rabbitMqOptions)
+        public ReceiveGeocodedAddress(IOptions<RabbitMqConfigurationSender> rabbitMqOptions, IAddCoordinatesRepository addCoordinatesRepository)
         {
             _hostname = rabbitMqOptions.Value.Hostname;
             _queueName = rabbitMqOptions.Value.QueueName;
             _username = rabbitMqOptions.Value.UserName;
             _password = rabbitMqOptions.Value.Password;
             _port = rabbitMqOptions.Value.Port;
-            _openStreetMapService = openStreetMapService;
+            _addCoordinatesRepository = addCoordinatesRepository;
+            
             InitializeRabbitMqListener();
         }
 
         private void InitializeRabbitMqListener()
         {
-            Console.WriteLine($"amqp://{_username}:{_password}@{_hostname}:{_port}/");
             var factory = new ConnectionFactory();
-            /*{ 
-                Uri = new Uri($"amqp://{_username}:{_password}@{_hostname}:{_port}/")
-            };*/
             factory.HostName = _hostname;
             factory.UserName = _username;
             factory.Password = _password;
             factory.Port = _port;
+            
             try {
 
                 _connection = factory.CreateConnection();
@@ -68,9 +66,9 @@ namespace Services.RabbitMq.receive
             consumer.Received += (ch, ea) =>
             {
                 var content = Encoding.UTF8.GetString(ea.Body.ToArray());
-                var address = JsonConvert.DeserializeObject<Address>(content);
+                var geocodedAddress = JsonConvert.DeserializeObject<GeocodedAddress>(content);
 
-                HandleMessage(address);
+                HandleMessage(geocodedAddress);
 
                 _channel.BasicAck(ea.DeliveryTag, false);
             };
@@ -84,9 +82,9 @@ namespace Services.RabbitMq.receive
             return Task.CompletedTask;
         }
 
-        private void HandleMessage(Address address)
+        private void HandleMessage(GeocodedAddress gAddress)
         {
-            _openStreetMapService.ConsumerOpenStreetMap(address);
+            _addCoordinatesRepository.InsertCoordinates(gAddress);
         }
 
         private void OnConsumerConsumerCancelled(object sender, ConsumerEventArgs e)

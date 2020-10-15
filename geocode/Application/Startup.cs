@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Services.RabbitMq.Options;
 using Services.RabbitMq.receive;
+using Services.RabbitMq.Sender;
 using Services.OpenStreetMap;
 using Microsoft.Extensions.Configuration;
 
@@ -27,7 +28,9 @@ namespace Services
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<RabbitMqConfiguration>(Configuration.GetSection("RabbitMq"));
+            services.Configure<RabbitMqConfigurationSender>(Configuration.GetSection("RabbitMqSender"));
             services.AddTransient<IOpenStreetMapService, OpenStreetMapService>();
+            services.AddTransient<ISendGeocodedAddress, SendGeocodedAddress>();
             services.AddHostedService<ReceiveAddress>();
         }
 

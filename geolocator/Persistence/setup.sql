@@ -15,6 +15,15 @@ CREATE TABLE [dbo].[Address](
 
 GO
 
+CREATE TABLE [dbo].[GeocodedAddress](
+	[Id] [int] NOT NULL,
+	[Latitude] [nvarchar](max) NOT NULL,
+	[Longitude] [nvarchar](max) NOT NULL,,
+	PRIMARY KEY (ID)
+)
+
+GO
+
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -39,5 +48,29 @@ SET NOCOUNT ON;
 	VALUES (@calle, @numero, @ciudad, @codigo_postal, @provincia, @pais)
 
 	SELECT @@IDENTITY AS ID
+END
+GO
+
+CREATE PROCEDURE [dbo].[InsertGeocodedAddress] 
+	 @id INT
+    ,@latitude VARCHAR(MAX)
+	,@longitude VARCHAR(MAX)
+AS
+BEGIN
+SET NOCOUNT ON;
+
+	INSERT INTO [GeocodedAddress] (Id, Latitude, Longitude)
+	VALUES (@id, @latitude, @longitude)
+END
+GO
+
+CREATE PROCEDURE [dbo].[GetAddressById] 
+	 @id INT
+AS
+BEGIN
+SET NOCOUNT ON;
+
+	SELECT * FROM [GeocodedAddress]
+	WHERE Id = @id
 END
 GO

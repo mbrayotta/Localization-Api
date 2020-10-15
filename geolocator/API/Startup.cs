@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Persistence;
+using Persistence.Repository;
 using Services.RabbitMq.Options;
 using Services.RabbitMq.Sender;
 
@@ -28,10 +29,15 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<AddressRepository>();
+            services.AddTransient<IAddressRepository,AddressRepository>();
+            services.AddTransient<IGeocodedAddressRepository,GeocodedAddressRepository>();
+            services.AddTransient<ISendAddress,SendAddress>();
+            services.AddTransient<IAddCoordinatesRepository,AddCoordinatesRepository>();
+            
             services.Configure<RabbitMqConfiguration>(Configuration.GetSection("RabbitMq"));
+            services.Configure<RabbitMqConfigurationSender>(Configuration.GetSection("RabbitMqReceive"));
             services.AddControllers();
-            services.AddTransient<SendAddress>();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -9,9 +9,9 @@ namespace API.Controllers
     [ApiController]
     public class GeocodeController : ControllerBase
     {
-        private readonly GeocodedAddressRepository _repository;
+        private readonly IGeocodedAddressRepository _repository;
 
-        public GeocodeController(GeocodedAddressRepository repository)
+        public GeocodeController(IGeocodedAddressRepository repository)
         {
             _repository = repository;
         }
