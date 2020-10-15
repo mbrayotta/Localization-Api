@@ -8,12 +8,15 @@ namespace Persistence
     public class AddressRepository : IAddressRepository
     {
         private readonly string _connectionString;
-        public AddressRepository(IConfiguration configuration){
+        public AddressRepository(IConfiguration configuration)
+        {
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
-        public async Task Insert(Address addres){
-            
+        public async Task<int> Insert(Address addres)
+        {            
+            int Id = 0;
+
             using(SqlConnection sqlConnec = new SqlConnection(_connectionString))
             {
                 using(SqlCommand cmd = new SqlCommand("InsertAddress",sqlConnec))
@@ -27,9 +30,16 @@ namespace Persistence
                     cmd.Parameters.Add(new SqlParameter("@pais", addres.Pais));
 
                     await sqlConnec.OpenAsync();
-                    await cmd.ExecuteNonQueryAsync();
+                    using(var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        if(await reader.ReadAsync())
+                        {
+                            Id = (int)reader["ID"];
+                        }
+                    }
                 }
             }
+            return Id;
         }
 
     }

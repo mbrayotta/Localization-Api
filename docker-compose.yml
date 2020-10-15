@@ -3,6 +3,26 @@
 version: '3.4'
 
 services:
+  rabbitmq:
+    container_name: rabbitmq
+    ports:
+      - '15672:15672'
+      - '5672:5672'
+    environment:
+        - RABBITMQ_DEFAULT_USER=user
+        - RABBITMQ_DEFAULT_PASS=password      
+    image: rabbitmq:3-management
+  
+  openstreetmapservices:
+    image: openstreetmapservices
+    build:
+      context: .
+      dockerfile: geocode/Application/Dockerfile
+    ports: 
+      - 9001:443
+    depends_on:
+      - rabbitmq  
+
   api:
     image: api
     build:
@@ -11,6 +31,7 @@ services:
     ports:
       - 8080:80
     depends_on:
+      - rabbitmq
       - db-server
 
   db-server:

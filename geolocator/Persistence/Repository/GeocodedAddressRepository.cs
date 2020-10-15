@@ -32,7 +32,7 @@ namespace Persistence
                         {
                             address = new GeocodedAddress()
                             {
-                                Estado = "PROCESANDO"
+                                State = "PROCESANDO"
                             };
                         }
                     }
@@ -49,7 +49,7 @@ namespace Persistence
                 Id = (int)reader["Id"],
                 Longitude = (decimal)reader["Longitude"],
                 Latitude = (decimal)reader["Latitude"],
-                Estado = "TERMINADO"
+                State = "TERMINADO"
             };
         }
     }

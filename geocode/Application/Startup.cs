@@ -4,17 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Persistence;
 using Services.RabbitMq.Options;
-using Services.RabbitMq.Sender;
+using Services.RabbitMq.receive;
+using Services.OpenStreetMap;
+using Microsoft.Extensions.Configuration;
 
-namespace API
+namespace Services
 {
     public class Startup
     {
@@ -24,14 +22,13 @@ namespace API
         }
 
         public IConfiguration Configuration { get; }
-
         // This method gets called by the runtime. Use this method to add services to the container.
+        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<AddressRepository>();
             services.Configure<RabbitMqConfiguration>(Configuration.GetSection("RabbitMq"));
-            services.AddControllers();
-            services.AddTransient<SendAddress>();
+            services.AddTransient<IOpenStreetMapService, OpenStreetMapService>();
+            services.AddHostedService<ReceiveAddress>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,11 +41,12 @@ namespace API
 
             app.UseRouting();
 
-            app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapGet("/", async context =>
+                {
+                    await context.Response.WriteAsync("Hello World!");
+                });
             });
         }
     }

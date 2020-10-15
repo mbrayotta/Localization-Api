@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace API
+namespace Services
 {
     public class Program
     {
@@ -27,6 +27,5 @@ namespace API
                 {
                     webBuilder.UseStartup<Startup>();
                 });
-                
     }
 }

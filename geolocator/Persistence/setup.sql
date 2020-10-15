@@ -37,5 +37,7 @@ SET NOCOUNT ON;
 
 	INSERT INTO [Address] (Calle, Numero, Ciudad, Codigo_Postal, Provincia, Pais)
 	VALUES (@calle, @numero, @ciudad, @codigo_postal, @provincia, @pais)
+
+	SELECT @@IDENTITY AS ID
 END
 GO

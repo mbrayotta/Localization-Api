@@ -5,6 +5,6 @@ namespace Domain
         public int Id { get; set; }
         public decimal Longitude { get; set; }
         public decimal Latitude { get; set; }
-        public string Estado { get; set; }
+        public string State { get; set; }
     }
 }

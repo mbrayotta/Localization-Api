@@ -5,6 +5,6 @@ namespace Persistence
 {
     public interface IAddressRepository
     {
-        Task Insert(Address address);
+        Task<int> Insert(Address address);
     }
 }
